@@ -75,7 +75,7 @@ func DefaultSources(cpan bool, backpan bool) []*Source {
 		sources = append(sources, NewSource("CPAN", "http://www.cpan.org/modules/02packages.details.txt.gz", "http://www.cpan.org"))
 	}
 	if backpan {
-		sources = append(sources, NewSource("BackPAN", "http://gitpan.integra.net/backpan-index.gz", "http://backpan.perl.org"))
+		sources = append(sources, NewSource("BackPAN", "http://gitpan.integra.net/backpan-index.gz", "http://backpan.cpantesters.org"))
 	}
 	return sources
 }
@@ -183,7 +183,7 @@ func Configure() *Config {
 		conf.Sources = append(conf.Sources, m)
 		c := NewMetaSource("cpan", "", "http://www.cpan.org", m.ModuleList)
 		conf.MetaSources = append(conf.MetaSources, c)
-		b := NewMetaSource("backpan", "", "http://backpan.perl.org", m.ModuleList)
+		b := NewMetaSource("backpan", "", "http://backpan.cpantesters.org", m.ModuleList)
 		conf.MetaSources = append(conf.MetaSources, b)
 	}
 
