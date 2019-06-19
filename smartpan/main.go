@@ -22,7 +22,7 @@ import (
 	"github.com/ian-kent/go-log/log"
 )
 
-var CurrentRelease = "0.11"
+var CurrentRelease = "0.12"
 
 type Releases []*Release
 type Release struct {
