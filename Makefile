@@ -1,4 +1,4 @@
-VERSION = 0.10
+VERSION = 0.12
 
 all: deps install fmt
 

@@ -13,11 +13,11 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"sync"
 	"time"
-	"path/filepath"
 )
 
 type DependencyList struct {
@@ -28,7 +28,7 @@ type DependencyList struct {
 var global_modules = make(map[string]*Module)
 var global_installed = make(map[string]*Module)
 var global_unique = make(map[string]int)
-var global_lock = new(sync.Mutex)
+var global_lock = sync.RWMutex{}
 var versionRe = regexp.MustCompile("^([=><!]+)?\\s*([v\\d\\._-]+)$")
 var file_lock = new(sync.Mutex)
 var file_get = make(map[string]*sync.Mutex)
@@ -126,8 +126,11 @@ func (d *DependencyList) Install() (int, error) {
 				}
 			}(d.Parent)
 
+			global_lock.RLock()
 			_, ok1 := global_installed[dep.Module.Cached]
 			_, ok2 := global_installed[dep.Module.Name+"-"+dep.Module.Version]
+			global_lock.RUnlock()
+
 			if ok1 || ok2 {
 				log.Trace("Module is already installed: %s", dep.Module)
 				return
@@ -158,8 +161,11 @@ func (d *DependencyList) Install() (int, error) {
 			<-install_semaphore
 			//log.Trace("%s:: Got semaphore", dep.module)
 
+			global_lock.Lock()
 			global_installed[dep.Module.Name+"-"+dep.Module.Version] = dep.Module
 			global_installed[dep.Module.Cached] = dep.Module
+			global_lock.Unlock()
+
 			global_unique[dep.Module.Name] = 1
 
 			n += o
